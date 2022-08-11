@@ -53,11 +53,11 @@ final class MapperMethod
 					->parameters()
 					->slice(1)
 					->map(function (FunctionParameterReflection $parameter) use ($map) {
-					Assert::isInstanceOf($parameter->type(), NamedType::class);
-					Assert::keyExists($map, $parameter->type()->name);
+						Assert::isInstanceOf($parameter->type(), NamedType::class);
+						Assert::keyExists($map, $parameter->type()->name);
 
-					return $map[$parameter->type()->name];
-				})
+						return $map[$parameter->type()->name];
+					})
 			);
 		} catch (TypeError $e) {
 			if (!str_contains($e->getMessage(), 'Argument #1')) {
