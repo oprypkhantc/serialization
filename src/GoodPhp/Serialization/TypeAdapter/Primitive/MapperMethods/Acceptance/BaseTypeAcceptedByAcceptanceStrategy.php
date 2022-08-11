@@ -16,6 +16,6 @@ class BaseTypeAcceptedByAcceptanceStrategy implements AcceptanceStrategy
 	public function accepts(Type $mapperType, Type $type, Serializer $serializer): bool
 	{
 		return $type instanceof NamedType &&
-			is_a($type->name, $this->baseType, true);
+			($type->name === $this->baseType || is_a($type->name, $this->baseType, true));
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\GoodPhp\Serialization\TypeAdapter\Primitive\ValueEnum;
+namespace Tests\Stubs;
 
 use TenantCloud\Standard\Enum\ValueEnum;
 

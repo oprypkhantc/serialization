@@ -27,11 +27,12 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 	public function serialize(mixed $value): mixed
 	{
 		return $this->properties
-			->mapWithKeys(function (BoundClassProperty $property) use ($value) {
-				return PropertyMappingException::rethrow($property->reflection, fn () => [
-					$property->serializedName => $property->serialize($value),
-				]);
-			})
+			->mapWithKeys(
+				fn (BoundClassProperty $property) => PropertyMappingException::rethrow(
+					$property->reflection,
+					fn () => $property->serialize($value)
+				)
+			)
 			->toArray();
 	}
 
@@ -44,9 +45,7 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 
 		foreach ($this->properties as $property) {
 			PropertyMappingException::rethrow($property->reflection, function () use ($object, $property, $value) {
-				$propertyValue = $value[$property->serializedName];
-
-				$property->deserialize($propertyValue, $object);
+				$property->deserialize($value, $object);
 			});
 		}
 

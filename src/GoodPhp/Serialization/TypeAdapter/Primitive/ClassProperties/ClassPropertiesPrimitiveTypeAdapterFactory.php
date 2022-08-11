@@ -11,6 +11,7 @@ use GoodPhp\Serialization\Serializer;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\NamingStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
 use GoodPhp\Serialization\TypeAdapter\TypeAdapterFactory;
+use TenantCloud\Standard\Optional\Optional;
 
 final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFactory
 {
@@ -41,13 +42,15 @@ final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFac
 				$attributes = $property->attributes()->toArray();
 
 				return PropertyMappingException::rethrow($property, fn () => new BoundClassProperty(
-					$property,
-					$serializer->adapter(
+					reflection: $property,
+					typeAdapter: $serializer->adapter(
 						$typeAdapterType,
 						$property->type(),
 						$attributes
 					),
-					$this->namingStrategy->translate($property->name(), $attributes),
+					serializedName: $this->namingStrategy->translate($property->name(), $attributes),
+					optional: $property->type() instanceof NamedType && $property->type()->name === Optional::class,
+					hasDefaultValue: $property->hasDefaultValue(),
 				));
 			})
 		);

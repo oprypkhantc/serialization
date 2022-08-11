@@ -1,6 +1,6 @@
 <?php
 
-namespace GoodPhp\Serialization\TypeAdapter\Primitive\Date;
+namespace GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn;
 
 use DateTime;
 use DateTimeInterface;

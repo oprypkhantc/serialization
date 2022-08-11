@@ -8,9 +8,11 @@ use GoodPhp\Reflection\Reflector\Reflection\MethodReflection;
 use GoodPhp\Reflection\Type\NamedType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\Serializer;
+use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\Acceptance\AcceptanceStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapperMethodTypeSubstiter\MapperMethodTypeSubstituter;
 use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
+use TypeError;
 use Webmozart\Assert\Assert;
 
 /**
@@ -43,19 +45,27 @@ final class MapperMethod
 			Type::class                                     => $type,
 		];
 
-		return $reflection->invoke(
-			$this->adapter,
-			$value,
-			...$reflection
-				->parameters()
-				->slice(1)
-				->map(function (FunctionParameterReflection $parameter) use ($map) {
+		try {
+			return $reflection->invokeStrict(
+				$this->adapter,
+				$value,
+				...$reflection
+					->parameters()
+					->slice(1)
+					->map(function (FunctionParameterReflection $parameter) use ($map) {
 					Assert::isInstanceOf($parameter->type(), NamedType::class);
 					Assert::keyExists($map, $parameter->type()->name);
 
 					return $map[$parameter->type()->name];
 				})
-		);
+			);
+		} catch (TypeError $e) {
+			if (!str_contains($e->getMessage(), 'Argument #1')) {
+				throw $e;
+			}
+
+			throw new UnexpectedValueTypeException($value, $reflection->parameters()->first()->type());
+		}
 
 //		$injected = [];
 //		$parameters = $reflection->parameters()->slice(1);

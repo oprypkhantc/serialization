@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\GoodPhp\Serialization;
+namespace Tests\Integration;
 
 use GoodPhp\Reflection\Type\PrimitiveType;
 use GoodPhp\Serialization\SerializerBuilder;
