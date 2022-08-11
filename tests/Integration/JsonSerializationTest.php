@@ -5,12 +5,15 @@ namespace Tests\Integration;
 use DateTime;
 use Exception;
 use Generator;
+use GoodPhp\Reflection\Type\Combinatorial\UnionType;
 use GoodPhp\Reflection\Type\NamedType;
 use GoodPhp\Reflection\Type\PrimitiveType;
 use GoodPhp\Reflection\Type\Special\NullableType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\SerializerBuilder;
 use GoodPhp\Serialization\TypeAdapter\Json\JsonTypeAdapter;
+use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\CollectionItemMappingException;
+use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedEnumValueException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\PropertyMappingException;
 use Illuminate\Support\Collection;
@@ -195,6 +198,12 @@ class JsonSerializationTest extends TestCase
 			'123.45',
 		];
 
+		yield 'float with int value' => [
+			'float',
+			123.0,
+			'123',
+		];
+
 		yield 'bool' => [
 			'bool',
 			true,
@@ -332,7 +341,7 @@ class JsonSerializationTest extends TestCase
 	/**
 	 * @dataProvider deserializesWithAnExceptionProvider
 	 */
-	public function testDeserializesWithAnException(Throwable $expectedException, string|NamedType $type, string $serialized): void
+	public function testDeserializesWithAnException(Throwable $expectedException, string|Type $type, string $serialized): void
 	{
 		$adapter = (new SerializerBuilder())
 			->build()
@@ -349,13 +358,110 @@ class JsonSerializationTest extends TestCase
 
 	public function deserializesWithAnExceptionProvider(): Generator
 	{
-		yield [
-			new Exception('Failed to parse time string (doesnt look like a date) at position 0 (d): The timezone could not be found in the database'),
-			DateTime::class,
-			'"doesnt look like a date"',
+		yield 'int' => [
+			new UnexpectedValueTypeException('123', PrimitiveType::integer()),
+			'int',
+			'"123"',
 		];
 
-		yield [
+		yield 'float' => [
+			new UnexpectedValueTypeException(true, PrimitiveType::float()),
+			'float',
+			'true',
+		];
+
+		yield 'bool' => [
+			new UnexpectedValueTypeException(0, PrimitiveType::boolean()),
+			'bool',
+			'0',
+		];
+
+		yield 'string' => [
+			new UnexpectedValueTypeException(123, PrimitiveType::string()),
+			'string',
+			'123',
+		];
+
+		yield 'null' => [
+			new UnexpectedValueTypeException(null, PrimitiveType::string()),
+			'string',
+			'null',
+		];
+
+		yield 'nullable string' => [
+			new UnexpectedValueTypeException(123, PrimitiveType::string()),
+			new NullableType(PrimitiveType::string()),
+			'123',
+		];
+
+		yield 'DateTime' => [
+			new Exception('Failed to parse time string (2020 dasd) at position 5 (d): The timezone could not be found in the database'),
+			DateTime::class,
+			'"2020 dasd"',
+		];
+
+		yield 'backed enum type' => [
+			new UnexpectedValueTypeException(true, new UnionType(new Collection([PrimitiveType::string(), PrimitiveType::integer()]))),
+			BackedEnumStub::class,
+			'true',
+		];
+
+		yield 'backed enum value' => [
+			new UnexpectedEnumValueException('five', ['one', 'two']),
+			BackedEnumStub::class,
+			'"five"',
+		];
+
+		yield 'value enum type' => [
+			new UnexpectedValueTypeException(true, new UnionType(new Collection([PrimitiveType::string(), PrimitiveType::integer()]))),
+			ValueEnumStub::class,
+			'true',
+		];
+
+		yield 'value enum value' => [
+			new UnexpectedEnumValueException('five', ['one', 'two']),
+			ValueEnumStub::class,
+			'"five"',
+		];
+
+		yield 'array of DateTime #1' => [
+			new CollectionItemMappingException(0, new Exception('Failed to parse time string (2020 dasd) at position 5 (d): The timezone could not be found in the database')),
+			PrimitiveType::array(
+				new NamedType(DateTime::class)
+			),
+			'["2020 dasd"]',
+		];
+
+		yield 'array of DateTime #2' => [
+			new CollectionItemMappingException(1, new UnexpectedValueTypeException(null, PrimitiveType::string())),
+			PrimitiveType::array(
+				new NamedType(DateTime::class)
+			),
+			'["2020-01-01T00:00:00.000+00:00", null]',
+		];
+
+		yield 'associative array of DateTime' => [
+			new CollectionItemMappingException('nested', new UnexpectedValueTypeException(null, PrimitiveType::string())),
+			PrimitiveType::array(
+				new NamedType(DateTime::class),
+				PrimitiveType::string(),
+			),
+			'{"nested": null}',
+		];
+
+		yield 'Collection of DateTime' => [
+			new CollectionItemMappingException(0, new UnexpectedValueTypeException(null, PrimitiveType::string())),
+			new NamedType(
+				Collection::class,
+				new Collection([
+					PrimitiveType::integer(),
+					new NamedType(DateTime::class),
+				])
+			),
+			'[null]',
+		];
+
+		yield 'ClassStub with wrong primitive type' => [
 			new PropertyMappingException('primitive', new UnexpectedValueTypeException('1', PrimitiveType::integer())),
 			new NamedType(
 				ClassStub::class,
@@ -366,7 +472,7 @@ class JsonSerializationTest extends TestCase
 			'{"primitive":"1","nested":{"field":"something"},"date":"2020-01-01T00:00:00.000+00:00"}',
 		];
 
-		yield [
+		yield 'ClassStub with wrong nested field type' => [
 			new PropertyMappingException('nested.field', new UnexpectedValueTypeException(123, PrimitiveType::string())),
 			new NamedType(
 				ClassStub::class,

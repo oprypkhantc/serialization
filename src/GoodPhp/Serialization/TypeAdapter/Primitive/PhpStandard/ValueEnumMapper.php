@@ -4,7 +4,6 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\PhpStandard;
 
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedEnumValueException;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\Acceptance\BaseTypeAcceptedByAcceptanceStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapFrom;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapTo;
@@ -37,14 +36,9 @@ final class ValueEnumMapper
 	 * @return TEnum
 	 */
 	#[MapFrom(PrimitiveTypeAdapter::class, new BaseTypeAcceptedByAcceptanceStrategy(ValueEnum::class))]
-	public function from(mixed $value, Type $type): ValueEnum
+	public function from(string|int $value, Type $type): ValueEnum
 	{
 		$enumClass = $type->name;
-
-		// If given a non-string-int value, just throw an exception without the value as to not clutter it with possibly huge values.
-		if (!is_string($value) && !is_int($value)) {
-			throw new UnexpectedValueTypeException($value, ['string', 'int']);
-		}
 
 		try {
 			return $enumClass::fromValue($value);
