@@ -31,7 +31,7 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 			$this->properties,
 			true,
 			fn (BoundClassProperty $property) => PropertyMappingException::rethrow(
-				$property->reflection,
+				$property,
 				fn () => $property->serialize($value)
 			)
 		);
@@ -47,7 +47,7 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 		MultipleMappingException::map(
 			$this->properties,
 			false,
-			fn (BoundClassProperty $property) => PropertyMappingException::rethrow($property->reflection, function () use ($object, $property, $value) {
+			fn (BoundClassProperty $property) => PropertyMappingException::rethrow($property, function () use ($object, $property, $value) {
 				$property->deserialize($value, $object);
 			})
 		);

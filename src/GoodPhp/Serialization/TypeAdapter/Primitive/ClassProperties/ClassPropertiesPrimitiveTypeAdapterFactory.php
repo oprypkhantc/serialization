@@ -39,16 +39,17 @@ final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFac
 		return new ClassPropertiesPrimitiveTypeAdapter(
 			fn () => $this->objectClassFactory->create($reflection->qualifiedName()),
 			$reflection->properties()->map(function (PropertyReflection $property) use ($serializer, $typeAdapterType, $attributes) {
-				$attributes = $property->attributes()->toArray();
+				$attributes = $property->attributes()->all();
+				$serializedName = $this->namingStrategy->translate($property->name(), $attributes);
 
-				return PropertyMappingException::rethrow($property, fn () => new BoundClassProperty(
+				return PropertyMappingException::rethrow($serializedName, fn () => new BoundClassProperty(
 					reflection: $property,
 					typeAdapter: $serializer->adapter(
 						$typeAdapterType,
 						$property->type(),
 						$attributes
 					),
-					serializedName: $this->namingStrategy->translate($property->name(), $attributes),
+					serializedName: $serializedName,
 					optional: $property->type() instanceof NamedType && $property->type()->name === Optional::class,
 					hasDefaultValue: $property->hasDefaultValue(),
 				));
