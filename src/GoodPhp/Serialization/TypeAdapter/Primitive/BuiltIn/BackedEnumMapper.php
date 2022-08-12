@@ -4,7 +4,7 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn;
 
 use BackedEnum;
 use GoodPhp\Reflection\Type\Type;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedEnumValueException;
+use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedEnumValueException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\Acceptance\BaseTypeAcceptedByAcceptanceStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapFrom;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapTo;

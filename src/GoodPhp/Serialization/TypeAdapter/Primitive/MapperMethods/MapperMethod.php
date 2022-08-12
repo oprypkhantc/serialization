@@ -8,10 +8,9 @@ use GoodPhp\Reflection\Reflector\Reflection\MethodReflection;
 use GoodPhp\Reflection\Type\NamedType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\Serializer;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedValueTypeException;
+use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\Acceptance\AcceptanceStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapperMethodTypeSubstiter\MapperMethodTypeSubstituter;
-use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
 use TypeError;
 use Webmozart\Assert\Assert;
 

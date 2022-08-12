@@ -1,6 +1,6 @@
 <?php
 
-namespace GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions;
+namespace GoodPhp\Serialization\TypeAdapter\Exception;
 
 use RuntimeException;
 use Throwable;

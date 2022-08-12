@@ -11,10 +11,12 @@ use GoodPhp\Reflection\Type\PrimitiveType;
 use GoodPhp\Reflection\Type\Special\NullableType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\SerializerBuilder;
+use GoodPhp\Serialization\TypeAdapter\Exception\CollectionItemMappingException;
+use GoodPhp\Serialization\TypeAdapter\Exception\MultipleMappingException;
+use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedEnumValueException;
+use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Json\JsonTypeAdapter;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\CollectionItemMappingException;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedEnumValueException;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\UnexpectedValueTypeException;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\MissingValueException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\PropertyMappingException;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
@@ -449,7 +451,7 @@ class JsonSerializationTest extends TestCase
 			'{"nested": null}',
 		];
 
-		yield 'Collection of DateTime' => [
+		yield 'Collection of DateTime #1' => [
 			new CollectionItemMappingException(0, new UnexpectedValueTypeException(null, PrimitiveType::string())),
 			new NamedType(
 				Collection::class,
@@ -461,8 +463,26 @@ class JsonSerializationTest extends TestCase
 			'[null]',
 		];
 
+		yield 'Collection of DateTime #2' => [
+			new MultipleMappingException([
+				new CollectionItemMappingException(0, new UnexpectedValueTypeException(null, PrimitiveType::string())),
+				new CollectionItemMappingException(1, new UnexpectedValueTypeException(null, PrimitiveType::string())),
+			]),
+			new NamedType(
+				Collection::class,
+				new Collection([
+					PrimitiveType::integer(),
+					new NamedType(DateTime::class),
+				])
+			),
+			'[null, null]',
+		];
+
 		yield 'ClassStub with wrong primitive type' => [
-			new PropertyMappingException('primitive', new UnexpectedValueTypeException('1', PrimitiveType::integer())),
+			new MultipleMappingException([
+				new PropertyMappingException('primitive', new UnexpectedValueTypeException('1', PrimitiveType::integer())),
+				new PropertyMappingException('nullable', new MissingValueException()),
+			]),
 			new NamedType(
 				ClassStub::class,
 				new Collection([
@@ -480,7 +500,7 @@ class JsonSerializationTest extends TestCase
 					new NamedType(DateTime::class),
 				])
 			),
-			'{"primitive":1,"nested":{"field":123},"date":"2020-01-01T00:00:00.000+00:00"}',
+			'{"primitive":1,"nested":{"field":123},"date":"2020-01-01T00:00:00.000+00:00","nullable":null}',
 		];
 	}
 }

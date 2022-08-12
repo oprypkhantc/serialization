@@ -4,7 +4,7 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
 use Exception;
 use GoodPhp\Reflection\Reflector\Reflection\PropertyReflection;
-use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Exceptions\CollectionItemMappingException;
+use GoodPhp\Serialization\TypeAdapter\Exception\CollectionItemMappingException;
 use RuntimeException;
 use Throwable;
 

@@ -3,6 +3,7 @@
 namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
 use Closure;
+use GoodPhp\Serialization\TypeAdapter\Exception\MultipleMappingException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
 use Illuminate\Support\Collection;
 
@@ -26,14 +27,14 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 	 */
 	public function serialize(mixed $value): mixed
 	{
-		return $this->properties
-			->mapWithKeys(
-				fn (BoundClassProperty $property) => PropertyMappingException::rethrow(
-					$property->reflection,
-					fn () => $property->serialize($value)
-				)
+		return MultipleMappingException::map(
+			$this->properties,
+			true,
+			fn (BoundClassProperty $property) => PropertyMappingException::rethrow(
+				$property->reflection,
+				fn () => $property->serialize($value)
 			)
-			->toArray();
+		);
 	}
 
 	/**
@@ -43,11 +44,13 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 	{
 		$object = ($this->newInstance)();
 
-		foreach ($this->properties as $property) {
-			PropertyMappingException::rethrow($property->reflection, function () use ($object, $property, $value) {
+		MultipleMappingException::map(
+			$this->properties,
+			false,
+			fn (BoundClassProperty $property) => PropertyMappingException::rethrow($property->reflection, function () use ($object, $property, $value) {
 				$property->deserialize($value, $object);
-			});
-		}
+			})
+		);
 
 		return $object;
 	}

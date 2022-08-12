@@ -55,14 +55,11 @@ final class BoundClassProperty
 				return;
 			}
 
-			throw new MissingValueException($this->serializedName);
+			throw new MissingValueException();
 		}
 
-		$deserialized = MissingValueException::rethrow(
-			$this->serializedName,
-			fn () => $this->typeAdapter->deserialize(
-				$data[$this->serializedName]
-			)
+		$deserialized = $this->typeAdapter->deserialize(
+			$data[$this->serializedName]
 		);
 
 		$this->reflection->set($into, $deserialized);
