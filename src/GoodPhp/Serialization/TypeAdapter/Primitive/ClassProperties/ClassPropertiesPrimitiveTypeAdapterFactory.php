@@ -4,7 +4,6 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
 use GoodPhp\Reflection\Reflector\Reflection\ClassReflection;
 use GoodPhp\Reflection\Reflector\Reflection\PropertyReflection;
-use GoodPhp\Reflection\Reflector\Reflector;
 use GoodPhp\Reflection\Type\NamedType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\Serializer;
@@ -30,7 +29,7 @@ final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFac
 			return null;
 		}
 
-		$reflection = $serializer->reflection->get(Reflector::class)->forNamedType($type);
+		$reflection = $serializer->reflector->forNamedType($type);
 
 		if (!$reflection instanceof ClassReflection) {
 			return null;

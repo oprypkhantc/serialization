@@ -4,7 +4,6 @@ namespace GoodPhp\Serialization\TypeAdapter\MatchingDelegate;
 
 use Closure;
 use GoodPhp\Reflection\Type\Type;
-use GoodPhp\Reflection\Type\TypeComparator;
 use GoodPhp\Serialization\Serializer;
 use GoodPhp\Serialization\TypeAdapter\TypeAdapter;
 use GoodPhp\Serialization\TypeAdapter\TypeAdapterFactory;
@@ -29,7 +28,7 @@ final class MatchingDelegateTypeAdapterFactory implements TypeAdapterFactory
 			return null;
 		}
 
-		if (!$serializer->reflection->get(TypeComparator::class)->accepts($this->type, $type)) {
+		if (!$serializer->reflector->accepts($this->type, $type)) {
 			return null;
 		}
 

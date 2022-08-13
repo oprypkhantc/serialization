@@ -2,18 +2,18 @@
 
 namespace GoodPhp\Serialization;
 
+use GoodPhp\Reflection\Reflector\Reflector;
 use GoodPhp\Reflection\Type\NamedType;
 use GoodPhp\Reflection\Type\Type;
 use GoodPhp\Serialization\TypeAdapter\Registry\TypeAdapterRegistry;
 use GoodPhp\Serialization\TypeAdapter\TypeAdapter;
 use GoodPhp\Serialization\TypeAdapter\TypeAdapterFactory;
-use Psr\Container\ContainerInterface;
 
 final class Serializer
 {
 	public function __construct(
 		private readonly TypeAdapterRegistry $typeAdapterRegistry,
-		public readonly ContainerInterface $reflection,
+		public readonly Reflector $reflector,
 	) {
 	}
 
