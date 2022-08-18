@@ -2,11 +2,15 @@
 
 namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Property;
 
+use GoodPhp\Reflection\Reflector\Reflection\PropertyReflection;
+
 /**
  * @template T of object
  */
 interface BoundClassProperty
 {
+	public function reflection(): PropertyReflection;
+
 	public function serializedName(): string;
 
 	/**

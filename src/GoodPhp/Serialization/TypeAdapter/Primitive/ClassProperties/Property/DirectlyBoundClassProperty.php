@@ -35,6 +35,11 @@ final class DirectlyBoundClassProperty implements BoundClassProperty
 		);
 	}
 
+	public function reflection(): PropertyReflection
+	{
+		return $this->reflection;
+	}
+
 	public function serializedName(): string
 	{
 		return $this->serializedName;

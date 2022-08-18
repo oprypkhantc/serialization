@@ -17,15 +17,18 @@ class DefaultValueSkippingBoundClassProperty implements BoundClassProperty
 	) {
 	}
 
-	public static function wrap(PropertyReflection $reflection, BoundClassProperty $property): BoundClassProperty
+	public static function wrap(BoundClassProperty $property): BoundClassProperty
 	{
-		if (!$reflection->hasDefaultValue()) {
+		if (!$property->reflection()->hasDefaultValue()) {
 			return $property;
 		}
 
-		return new self(
-			delegate: $property,
-		);
+		return new self($property);
+	}
+
+	public function reflection(): PropertyReflection
+	{
+		return $this->delegate->reflection();
 	}
 
 	public function serializedName(): string

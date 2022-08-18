@@ -17,20 +17,21 @@ class OptionalSkippingBoundClassProperty implements BoundClassProperty
 {
 	public function __construct(
 		private readonly BoundClassProperty $delegate,
-		private readonly PropertyReflection $reflection,
 	) {
 	}
 
-	public static function wrap(PropertyReflection $reflection, BoundClassProperty $property): BoundClassProperty
+	public static function wrap(BoundClassProperty $property): BoundClassProperty
 	{
-		if (!$reflection->type() instanceof NamedType || $reflection->type()->name !== Optional::class) {
+		if (!$property->reflection()->type() instanceof NamedType || $property->reflection()->type()->name !== Optional::class) {
 			return $property;
 		}
 
-		return new self(
-			delegate: $property,
-			reflection: $reflection,
-		);
+		return new self($property);
+	}
+
+	public function reflection(): PropertyReflection
+	{
+		return $this->delegate->reflection();
 	}
 
 	public function serializedName(): string
@@ -43,7 +44,7 @@ class OptionalSkippingBoundClassProperty implements BoundClassProperty
 	 */
 	public function serialize(object $object): array
 	{
-		$value = $this->reflection->get($object);
+		$value = $this->reflection()->get($object);
 
 		return $value->hasValue() ?
 			$this->delegate->serialize($object) :
@@ -63,7 +64,7 @@ class OptionalSkippingBoundClassProperty implements BoundClassProperty
 			// works for a missing value on this nesting level, which exactly what we want.
 
 			return [
-				$this->reflection->name() => empty_optional(),
+				$this->reflection()->name() => empty_optional(),
 			];
 		}
 	}
