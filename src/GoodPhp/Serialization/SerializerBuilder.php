@@ -12,10 +12,11 @@ use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\DateTimeMapper;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Nullable\NullableTypeAdapterFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\ScalarMapper;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\ClassPropertiesPrimitiveTypeAdapterFactory;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Constructing\NoConstructorObjectFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\BuiltInNamingStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\NamingStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\SerializedNameAttributeNamingStrategy;
-use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\ObjectClassFactory;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Property\DefaultBoundClassPropertyFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\Illuminate\CollectionMapper;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapperMethodFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\MapperMethods\MapperMethodsPrimitiveTypeAdapterFactoryFactory;
@@ -116,7 +117,8 @@ final class SerializerBuilder
 			->addMapperLast(new DateTimeMapper())
 			->addFactoryLast(new ClassPropertiesPrimitiveTypeAdapterFactory(
 				new SerializedNameAttributeNamingStrategy($this->namingStrategy ?? BuiltInNamingStrategy::PRESERVING),
-				new ObjectClassFactory(),
+				new NoConstructorObjectFactory(),
+				new DefaultBoundClassPropertyFactory(),
 			))
 			->addFactoryLast(new FromPrimitiveJsonTypeAdapterFactory());
 

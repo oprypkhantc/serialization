@@ -4,6 +4,7 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
 use Closure;
 use GoodPhp\Serialization\TypeAdapter\Exception\MultipleMappingException;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Property\BoundClassProperty;
 use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
 use Illuminate\Support\Collection;
 

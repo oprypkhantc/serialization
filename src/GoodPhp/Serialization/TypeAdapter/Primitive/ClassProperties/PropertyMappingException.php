@@ -4,6 +4,7 @@ namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
 use Exception;
 use GoodPhp\Serialization\TypeAdapter\Exception\CollectionItemMappingException;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Property\BoundClassProperty;
 use RuntimeException;
 use Throwable;
 
@@ -18,7 +19,7 @@ class PropertyMappingException extends RuntimeException
 
 	public static function rethrow(BoundClassProperty|string $serializedName, callable $callback): mixed
 	{
-		$serializedName = $serializedName instanceof BoundClassProperty ? $serializedName->serializedName : $serializedName;
+		$serializedName = $serializedName instanceof BoundClassProperty ? $serializedName->serializedName() : $serializedName;
 
 		try {
 			return $callback();
