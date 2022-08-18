@@ -38,7 +38,6 @@ final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFac
 		}
 
 		return new ClassPropertiesPrimitiveTypeAdapter(
-			fn () => $this->objectFactory->create($reflection),
 			$reflection->properties()->map(function (PropertyReflection $property) use ($reflection, $serializer, $typeAdapterType) {
 				$serializedName = $this->namingStrategy->translate($property->name(), $property->attributes(), $reflection->attributes());
 
@@ -48,7 +47,9 @@ final class ClassPropertiesPrimitiveTypeAdapterFactory implements TypeAdapterFac
 					typeAdapterType: $typeAdapterType,
 					serializer: $serializer
 				));
-			})
+			}),
+			$reflection,
+			$this->objectFactory,
 		);
 	}
 }

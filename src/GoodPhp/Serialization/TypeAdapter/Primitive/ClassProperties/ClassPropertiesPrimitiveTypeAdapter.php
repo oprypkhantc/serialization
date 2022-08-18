@@ -2,8 +2,9 @@
 
 namespace GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties;
 
-use Closure;
+use GoodPhp\Reflection\Reflector\Reflection\ClassReflection;
 use GoodPhp\Serialization\TypeAdapter\Exception\MultipleMappingException;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Constructing\ObjectFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Property\BoundClassProperty;
 use GoodPhp\Serialization\TypeAdapter\Primitive\PrimitiveTypeAdapter;
 use Illuminate\Support\Collection;
@@ -14,12 +15,13 @@ use Illuminate\Support\Collection;
 final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 {
 	/**
-	 * @param Closure(): T                        $newInstance
 	 * @param Collection<int, BoundClassProperty> $properties
+	 * @param ObjectFactory<T>                    $objectFactory
 	 */
 	public function __construct(
-		private readonly Closure $newInstance,
 		private readonly Collection $properties,
+		private readonly ClassReflection $reflection,
+		private readonly ObjectFactory $objectFactory,
 	) {
 	}
 
@@ -43,16 +45,15 @@ final class ClassPropertiesPrimitiveTypeAdapter implements PrimitiveTypeAdapter
 	 */
 	public function deserialize(mixed $value): mixed
 	{
-		$object = ($this->newInstance)();
-
-		MultipleMappingException::map(
+		$data = MultipleMappingException::map(
 			$this->properties,
-			false,
-			fn (BoundClassProperty $property) => PropertyMappingException::rethrow($property, function () use ($object, $property, $value) {
-				$property->deserialize($value, $object);
-			})
+			true,
+			fn (BoundClassProperty $property) => PropertyMappingException::rethrow(
+				$property,
+				fn () => $property->deserialize($value)
+			)
 		);
 
-		return $object;
+		return $this->objectFactory->create($this->reflection, $data);
 	}
 }

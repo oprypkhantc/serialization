@@ -44,11 +44,12 @@ class DefaultValueSkippingBoundClassProperty implements BoundClassProperty
 	/**
 	 * @inheritDoc
 	 */
-	public function deserialize(array $data, object $into): void
+	public function deserialize(array $data): array
 	{
 		try {
-			$this->delegate->deserialize($data, $into);
+			return $this->delegate->deserialize($data);
 		} catch (MissingValueException) {
+			return [];
 		}
 	}
 }

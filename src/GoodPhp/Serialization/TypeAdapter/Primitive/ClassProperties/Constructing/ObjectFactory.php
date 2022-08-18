@@ -9,9 +9,10 @@ interface ObjectFactory
 	/**
 	 * @template T
 	 *
-	 * @param ClassReflection<T> $reflection
+	 * @param ClassReflection<T>   $reflection
+	 * @param array<string, mixed> $data
 	 *
 	 * @return T
 	 */
-	public function create(ClassReflection $reflection): object;
+	public function create(ClassReflection $reflection, array $data): object;
 }

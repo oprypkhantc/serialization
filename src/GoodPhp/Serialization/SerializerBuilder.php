@@ -12,7 +12,7 @@ use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\DateTimeMapper;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\Nullable\NullableTypeAdapterFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\BuiltIn\ScalarMapper;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\ClassPropertiesPrimitiveTypeAdapterFactory;
-use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Constructing\NoConstructorObjectFactory;
+use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Constructing\NoConstructorPropertySetObjectFactory;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\BuiltInNamingStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\NamingStrategy;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\Naming\SerializedNameAttributeNamingStrategy;
@@ -117,7 +117,7 @@ final class SerializerBuilder
 			->addMapperLast(new DateTimeMapper())
 			->addFactoryLast(new ClassPropertiesPrimitiveTypeAdapterFactory(
 				new SerializedNameAttributeNamingStrategy($this->namingStrategy ?? BuiltInNamingStrategy::PRESERVING),
-				new NoConstructorObjectFactory(),
+				new NoConstructorPropertySetObjectFactory(),
 				new DefaultBoundClassPropertyFactory(),
 			))
 			->addFactoryLast(new FromPrimitiveJsonTypeAdapterFactory());

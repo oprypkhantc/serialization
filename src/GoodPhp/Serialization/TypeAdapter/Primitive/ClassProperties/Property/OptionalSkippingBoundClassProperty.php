@@ -53,16 +53,18 @@ class OptionalSkippingBoundClassProperty implements BoundClassProperty
 	/**
 	 * @inheritDoc
 	 */
-	public function deserialize(array $data, object $into): void
+	public function deserialize(array $data): array
 	{
 		try {
-			$this->delegate->deserialize($data, $into);
+			return $this->delegate->deserialize($data);
 		} catch (MissingValueException) {
 			// It looks like MissingValueException might come from a nested ClassProperties adapter, but that's not the case:
 			// if a nested adapter throws it, it will be re-thrown as a PropertyMappingException, meaning this catch only
 			// works for a missing value on this nesting level, which exactly what we want.
 
-			$this->reflection->set($into, empty_optional());
+			return [
+				$this->reflection->name() => empty_optional(),
+			];
 		}
 	}
 }

@@ -17,5 +17,5 @@ interface BoundClassProperty
 	/**
 	 * @param T $into
 	 */
-	public function deserialize(array $data, object $into): void;
+	public function deserialize(array $data): array;
 }

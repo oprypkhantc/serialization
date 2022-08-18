@@ -55,17 +55,16 @@ final class DirectlyBoundClassProperty implements BoundClassProperty
 	/**
 	 * @inheritDoc
 	 */
-	public function deserialize(array $data, object $into): void
+	public function deserialize(array $data): array
 	{
 		if (!Arr::has($data, $this->serializedName)) {
 			throw new MissingValueException();
 		}
 
-		$this->reflection->set(
-			$into,
-			$this->typeAdapter->deserialize(
+		return [
+			$this->reflection->name() => $this->typeAdapter->deserialize(
 				$data[$this->serializedName]
-			)
-		);
+			),
+		];
 	}
 }
