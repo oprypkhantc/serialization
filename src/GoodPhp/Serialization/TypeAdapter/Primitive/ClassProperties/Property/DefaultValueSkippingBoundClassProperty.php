@@ -26,7 +26,7 @@ class DefaultValueSkippingBoundClassProperty implements BoundClassProperty
 		}
 
 		if ($property->reflection()->promotedParameter() && $property->reflection()->promotedParameter()->hasDefaultValue()) {
-			return new self($property, fn () => $property->reflection()->promotedParameter()->hasDefaultValue());
+			return new self($property, fn () => $property->reflection()->promotedParameter()->defaultValue());
 		}
 
 		return $property;
