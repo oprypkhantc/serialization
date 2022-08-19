@@ -16,7 +16,6 @@ use GoodPhp\Serialization\TypeAdapter\Exception\MultipleMappingException;
 use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedEnumValueException;
 use GoodPhp\Serialization\TypeAdapter\Exception\UnexpectedValueTypeException;
 use GoodPhp\Serialization\TypeAdapter\Json\JsonTypeAdapter;
-use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\MissingValueException;
 use GoodPhp\Serialization\TypeAdapter\Primitive\ClassProperties\PropertyMappingException;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
@@ -336,7 +335,7 @@ class JsonSerializationTest extends TestCase
 				empty_optional(),
 				null,
 			),
-			'{"primitive":1,"nested":{},"date":"2020-01-01T00:00:00.000+00:00","nullable":null}',
+			'{"primitive":1,"nested":{},"date":"2020-01-01T00:00:00.000+00:00"}',
 		];
 	}
 
@@ -479,10 +478,7 @@ class JsonSerializationTest extends TestCase
 		];
 
 		yield 'ClassStub with wrong primitive type' => [
-			new MultipleMappingException([
-				new PropertyMappingException('primitive', new UnexpectedValueTypeException('1', PrimitiveType::integer())),
-				new PropertyMappingException('nullable', new MissingValueException()),
-			]),
+			new PropertyMappingException('primitive', new UnexpectedValueTypeException('1', PrimitiveType::integer())),
 			new NamedType(
 				ClassStub::class,
 				new Collection([

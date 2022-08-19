@@ -10,8 +10,10 @@ class DefaultBoundClassPropertyFactory implements BoundClassPropertyFactory
 	public function create(PropertyReflection $property, string $serializedName, string $typeAdapterType, Serializer $serializer): BoundClassProperty
 	{
 		return OptionalSkippingBoundClassProperty::wrap(
-			DefaultValueSkippingBoundClassProperty::wrap(
-				DirectlyBoundClassProperty::from($property, $serializedName, $typeAdapterType, $serializer)
+			NullSkippingBoundClassProperty::wrap(
+				DefaultValueSkippingBoundClassProperty::wrap(
+					DirectlyBoundClassProperty::from($property, $serializedName, $typeAdapterType, $serializer)
+				)
 			)
 		);
 	}
