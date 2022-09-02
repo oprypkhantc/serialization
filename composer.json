@@ -19,7 +19,8 @@
 		"php-cs-fixer/shim": "~3.8.0",
 		"phpstan/phpstan": "~1.7.15",
 		"phake/phake": "^4.2",
-		"phpstan/phpstan-webmozart-assert": "^1.2"
+		"phpstan/phpstan-webmozart-assert": "^1.2",
+		"tenantcloud/php-cs-fixer-rule-sets": "^2.0"
 	},
 	"autoload": {
 		"psr-0": {

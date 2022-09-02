@@ -9,8 +9,8 @@ class CollectionItemMappingException extends RuntimeException
 {
 	public function __construct(
 		public readonly string|int $key,
-		?Throwable $previous = null
+		Throwable $previous
 	) {
-		parent::__construct("Could not map item at key '{$key}'", 0, $previous);
+		parent::__construct("Could not map item at key '{$key}': {$previous->getMessage()}", 0, $previous);
 	}
 }
